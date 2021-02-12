@@ -9,68 +9,58 @@ export default {
     name: 'vueWeeper',
     methods: {
         source() {
-            this.original = []
-            let count = 0
-            let line = new Array()
-            for (let i = 0; i < 9; i++) {
-                line = []
-                for (let j = 0; j < 10; j++) {
-                    let k = count < 10 ? Math.floor(Math.random() * 10) : 0
-                    if (k === 9) {
-                        count++
-                        line[j] = 1
-                    } else { line[j] = 0 }
+            let table = new Array()
+            let final = new Array()
+            let line0 = new Array()
+            let line1 = new Array()
+            for (let i = 0; i < this.row; i++) {
+                line0 = []
+                line1 = []
+                for (let j = 0; j < this.col; j++) {
+                    line0.push(0)
+                    line1.push(0)
                 }
-                this.original.push(line)
+                table.push(line0)
+                final.push(line1)
             }
-            for (let j = 0; j < 10; j++) {
-                let k = count < 10 ? 9 : 0
-                if (k === 9) {
-                    count++
-                    line[j] = 1
-                } else { line[j] = 0 }
-            }
-            this.original.push(line)
-            // console.log(this.original)
-            this.output()
-            // console.log(count);
-        },
-        output() {
-            this.final = []
-            let line = new Array()
-            for (let i = 0; i < 10; i++) {
-                line = []
-                for (let j = 0; j < 10; j++) {
-                    let count = 0
-                    if (this.original[i][j] === 1) { count = '◉' }
+            let m = 0
+            do {
+                let i = Math.floor(Math.random() * this.row)
+                let j = Math.floor(Math.random() * this.col)
+                if (table[i][j] === 0) {
+                    table[i][j] = 1
+                    m++
+                }
+            } while (m < this.mines)
+            console.log(table)
+            for (let i = 0; i < this.row; i++) {
+                for (let j = 0; j < this.col; j++) {
+                    if (table[i][j] === 1) { final[i][j] = 9 }
                     else {
                         if (i > 0) {
-                            if (j > 0) { count += this.original[i - 1][j - 1] }
-                            count += this.original[i - 1][j]
-                            if (j < 9) { count += this.original[i - 1][j + 1] }
+                            if (j > 0) { final[i][j] += table[i - 1][j - 1] }
+                            final[i][j] += table[i - 1][j]
+                            if (j < this.col - 1) { final[i][j] += table[i - 1][j + 1] }
                         }
-                        if (j > 0) { count += this.original[i][j - 1] }
-                        count += this.original[i][j]
-                        if (j < 9) { count += this.original[i][j + 1] }
-                        if (i < 9) {
-                            if (j > 0) { count += this.original[i + 1][j - 1] }
-                            count += this.original[i + 1][j]
-                            if (j < 9) { count += this.original[i + 1][j + 1] }
+                        if (j > 0) { final[i][j] += table[i][j - 1] }
+                        final[i][j] += table[i][j]
+                        if (j < this.col - 1) { final[i][j] += table[i][j + 1] }
+                        if (i < this.row - 1) {
+                            if (j > 0) { final[i][j] += table[i + 1][j - 1] }
+                            final[i][j] += table[i + 1][j]
+                            if (j < this.col - 1) { final[i][j] += table[i + 1][j + 1] }
                         }
                     }
-                    // console.log(this.original[i][j]);
-                    line[j] = count
                 }
-                this.final.push(line)
             }
-            console.log(this.original)
-            console.log(this.final)
+            console.log(final)
         },
     },
     data() {
         return {
-            original: [],
-            final: [],
+            col: 10,
+            row: 10,
+            mines: 10,
         }
     }
 }
