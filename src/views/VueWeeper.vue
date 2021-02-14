@@ -5,7 +5,7 @@
         <template v-for="(row, index) of final">
             <div class="cell" v-for="(col, num) of row" @mouseenter="cellEnter(index, num)"
             @click.left="cellClick(index, num)" @contextmenu.prevent="cellFlag(index, num)"
-            :key="index + '_' + num" :ref="index + '_' + num"/>
+            :key="index + '_' + num" :ref="index"/>
         </template>
     </div>
     <div id="restart" @click="restart()">Restart</div>
@@ -74,18 +74,17 @@ export default {
             // 重置cell样式
             for (let i = 0; i < this.row; i++) {
                 for (let j = 0; j < this.col; j++) {
-                    this.$refs[i + "_" + j][0].style.background = "linear-gradient(150deg, hsla(0, 0%, 97%, 1), hsla(0, 0%, 90%, 1))"
-                    this.$refs[i + "_" + j][0].innerText = ""
+                    this.$refs[i][j].style.background = "linear-gradient(150deg, hsla(0, 0%, 97%, 1), hsla(0, 0%, 90%, 1))"
+                    this.$refs[i][j].innerText = ""
                 }
             }
             this.source()
         },
         cellEnter(index, num) {
-            let ref = index + "_" + num
             if (this.opened[index][num] === 1) {
-                this.$refs[ref][0].style.cursor = "default"
+                this.$refs[index][num].style.cursor = "default"
             } else {
-                this.$refs[ref][0].style.cursor = "pointer"
+                this.$refs[index][num].style.cursor = "pointer"
             }
         },
         cellFlag(index, num) {
@@ -93,15 +92,14 @@ export default {
             if (this.opened[index][num] === 0) {
                 if (this.flag[index][num] === 0) {
                     this.flag[index][num] = 1
-                    this.$refs[index + "_" + num][0].style.background = "hsla(120, 100%, 44%, 1)"
+                    this.$refs[index][num].style.background = "hsla(120, 100%, 44%, 1)"
                 } else {
                     this.flag[index][num] = 0
-                    this.$refs[index + "_" + num][0].style.background = "linear-gradient(150deg, hsla(0, 0%, 97%, 1), hsla(0, 0%, 90%, 1))"
+                    this.$refs[index][num].style.background = "linear-gradient(150deg, hsla(0, 0%, 97%, 1), hsla(0, 0%, 90%, 1))"
                 }
             }
         },
         cellClick(index, num) {
-            let ref = index + "_" + num
             // 判断cell是否已点击或插旗
             if (this.opened[index][num] === 0 && this.flag[index][num] === 0 ) {
                 let count = this.final[index][num]
@@ -109,7 +107,7 @@ export default {
                 this.opened[index][num] = 1
                 if (count === 9) {
                     // cell为雷
-                    this.$refs[ref][0].style.background = "hsla(0, 100%, 84%, 1)"
+                    this.$refs[index][num].style.background = "hsla(0, 100%, 84%, 1)"
                     // 点开所有的雷
                     for (let i = 0; i < this.row; i++) {
                         for (let j = 0; j < this.col; j++) {
@@ -118,7 +116,7 @@ export default {
                     }
                 } else if (count === 0) {
                     // cell为空
-                    this.$refs[ref][0].style.background = "hsla(0, 0%, 97%, 1)"
+                    this.$refs[index][num].style.background = "hsla(0, 0%, 97%, 1)"
                     // 递归周围的cell
                     if (index > 0) {
                         if (num > 0) { this.cellClick(index - 1, num - 1) }
@@ -134,8 +132,8 @@ export default {
                     }
                 } else {
                     // cell为数字
-                    this.$refs[ref][0].style.background = "hsla(0, 0%, 97%, 1)"
-                    this.$refs[ref][0].innerText = count
+                    this.$refs[index][num].style.background = "hsla(0, 0%, 97%, 1)"
+                    this.$refs[index][num].innerText = count
                 }
             }
         },
